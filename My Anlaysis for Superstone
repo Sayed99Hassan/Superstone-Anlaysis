@@ -1,0 +1,43 @@
+This my Outcomes
+
+select category , sum(profit)
+from orders join products using(product_id) group by 1
+
+
+select sub_category , sum(profit)
+from orders join products using(product_id) group by 1
+
+select extract('year' from order_date) , ship_mode,sum(profit)
+from orders JOIN customers using(customer_id)JOIN products using(product_id)
+join regions using(region_id)
+where country ilike'United State%' and sub_category ilike 'Table%'
+group by 1,2
+order by sum(profit) asc
+
+select segment , sub_category,sum(profit)
+from orders JOIN customers using(customer_id)JOIN products using(product_id)
+join regions using(region_id)
+where country ilike'United State%' and sub_category ilike 'Table%'
+group by 1,2
+order by sum(profit) asc
+
+SELECT
+     order_id
+    ,score, profit, sales ,discount,salesperson,region,country FROM
+(SELECT *,
+(profit-AVG(profit) Over())/STDDEV(profit) Over() as Zscore
+FROM orders join products using(product_id) join regions using(region_id)  ) as z_table
+WHERE sub_category='Tables' and  (Zscore  between   -1.96 and 1.96) and profit <0
+order by 3
+
+select region,country,category,sub_category,sum(profit),SPLIT_PART
+(product_name,' ' ,1) AS manufacturer
+from orders join products using(product_id)join regions using(region_id)
+group by 1,2,3,4,6
+order by sum(profit) asc
+
+
+select category,sub_category,country ,sum(profit)
+from orders JOIN regions using(region_id)JOIN products using(product_id)
+group by 1,2,3
+order by sum(profit)
